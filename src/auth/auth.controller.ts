@@ -1,37 +1,27 @@
-import { Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
+import { Controller, Post, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CurrentUser } from "./current-user";
 import { JwtService } from "@nestjs/jwt";
-import { Auth, JWT } from "./auth-util";
+import { JWT, LocalAuth } from "./auth-util";
+import { User } from "../user/user.entity";
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService, private readonly jwtService: JwtService) {
     }
 
-    @Post('login')
-    @UseGuards(Auth)
-    async login(@Request() request) {
-        console.log(request)
+    @Post('/login')
+    @UseGuards(LocalAuth)
+    async login(@CurrentUser() user: User) {
         return {
-            userId: request.user.id,
+            token: this.authService.generate(user)
         }
     }
 
-
-    @Get()
+    @Post()
     @UseGuards(JWT)
-    async secretFunc(@CurrentUser() user) {
+    async me(@CurrentUser() user: User) {
         return user;
-    }
-
-    @Get('/token')
-    async generate() {
-        return this.jwtService.sign({
-            sub: 1,
-            username: "Rakan"
-        })
     }
 }
 

@@ -1,4 +1,5 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Post } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 
 
 @Controller('project')

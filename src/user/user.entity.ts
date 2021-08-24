@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinColumn, JoinTable } from "typeorm";
 import { Department } from "../department/department.entity";
 import { Project } from "../project/project.entity";
+import { Role } from "./role";
 
 @Entity()
 export class User {
@@ -8,12 +9,9 @@ export class User {
     id: number;
 
     @Column()
-    username: string;
-
-    @Column()
     password: string;
 
-    @Column()
+    @Column({unique:true})
     email: string;
 
     @Column()
@@ -22,19 +20,27 @@ export class User {
     @Column()
     lastName: string;
 
+    @Column('enum', {
+        enum: Role,
+        default: Role.Employee
+    })
+    role: Role;
+
     @ManyToOne(() => Department, (department) => department.users, {
         nullable: true
     })
     @JoinColumn()
     department: Department;
 
-    @ManyToMany(() => Project, (project) => project.users)
+    @ManyToMany(() => Project, (project) => project.users, {nullable: true})
     @JoinTable()
     projects: Project[];
 
     @Column()
     createdAt: Date;
 
-    @Column()
+    @Column({
+        default: null
+    })
     updatedAt: Date;
 }
