@@ -1,0 +1,6 @@
+DB_NAME=
+DB_HOST=127.0.0.1
+DB_PASSWORD=
+DB_PORT=3306
+DB_USER=root
+JWT_SECRET=change_me_for_extra_security
