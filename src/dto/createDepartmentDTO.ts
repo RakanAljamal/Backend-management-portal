@@ -6,5 +6,5 @@ export class CreateDepartmentDTO {
     @Length(5, 255, {message: 'The name length is wrong'})
     name: string;
 
-    users: CreateEmployeeDTO[];
+    userId: string;
 }

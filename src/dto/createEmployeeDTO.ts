@@ -1,5 +1,5 @@
-import { IsDateString, IsString, Length, IsEmail } from "class-validator";
-import { CreateProjectDTO } from "./createProjectDTO";
+import { IsString, Length, IsEmail } from "class-validator";
+import { OmitType, PartialType } from "@nestjs/mapped-types";
 
 export class CreateEmployeeDTO {
     @IsString()
@@ -18,9 +18,13 @@ export class CreateEmployeeDTO {
     @IsEmail()
     email: string;
 
-    project: string;
+    projectsId: string[];
 
 
-    department: string;
+    departmentId: string;
 
+}
+
+export class UpdateEmployeeDto extends PartialType(OmitType(CreateEmployeeDTO, ['email'] as const)) {
+    oldPassword: string;
 }

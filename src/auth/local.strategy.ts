@@ -5,6 +5,7 @@ import { Strategy } from "passport-local";
 import { Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { User } from "../user/user.entity";
+import { mapUser } from "../user/user-util";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -20,7 +21,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     public async validate(
         email: string, password: string
     ): Promise<any> {
-        console.log(email, password)
         const user = await this.userRepository.findOne({
             where: {email}
         });
@@ -35,8 +35,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
             throw new UnauthorizedException();
         }
 
-        const {password: pass, ...result} = user;
 
-        return result;
+        return mapUser(user);
     }
 }

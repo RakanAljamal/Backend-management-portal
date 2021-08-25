@@ -1,4 +1,5 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { mapUser } from "../user/user-util";
 
 export const CurrentUser = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
     const req = ctx.switchToHttp().getRequest();
@@ -6,6 +7,5 @@ export const CurrentUser = createParamDecorator((data: unknown, ctx: ExecutionCo
     if (!user)
         return null;
 
-    const {password, ...other} = user
-    return other;
+    return mapUser(user);
 })

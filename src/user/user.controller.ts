@@ -1,56 +1,26 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Post, UseGuards } from "@nestjs/common";
-import { User } from "./user.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from 'typeorm';
-import { CreateEmployeeDTO } from "../dto/createEmployeeDTO";
-import { Department } from "../department/department.entity";
-import * as bcrypt from 'bcrypt';
+import { Body, Controller, Param, Post, Patch, UseGuards } from "@nestjs/common";
+import { CreateEmployeeDTO, UpdateEmployeeDto } from "../dto/createEmployeeDTO";
+import { UserService } from "./user.service";
+import { CurrentUser } from "../auth/current-user";
 import { JWT } from "../auth/auth-util";
 
 @Controller('user')
 export class UserController {
 
-    constructor(@InjectRepository(User) readonly userRepository: Repository<User>,
-                @InjectRepository(Department) readonly departmentRepo: Repository<Department>) {
-    }
-
-    @Get()
-    @UseGuards(JWT)
-    async welcome() {
-        return "This is an User page"
+    constructor(private readonly userService: UserService) {
     }
 
 
     @Post('/register')
     async createEmployee(@Body() employee: CreateEmployeeDTO) {
-
-        const {firstName, lastName, password, email} = employee;
-
-        const user = await this.userRepository.findOne({
-            where: {email}
-        })
-
-        if (user) {
-            throw new BadRequestException("Email already exist");
-        }
-
-        const department = await this.departmentRepo.findOne(employee.department)
-
-        if (employee.department && !department) {
-            throw new NotFoundException(`department: ${department} not found`);
-        }
-
-        if (employee.password !== employee.retypedPassword) {
-            throw new BadRequestException('Passwords doesnt match');
-        }
-
-        this.userRepository.save({
-            firstName,
-            lastName,
-            password: await bcrypt.hash(password, 10),
-            email,
-            department,
-            createdAt: new Date().toISOString()
-        });
+        return await this.userService.createEmployee(employee);
     }
+
+    @Patch('/update')
+    @UseGuards(JWT)
+    async update(@Body() employee: UpdateEmployeeDto, @CurrentUser() currentUser) {
+        return await this.userService.updateEmployee(employee, currentUser);
+    }
+
+
 }

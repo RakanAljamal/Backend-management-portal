@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "../user/user.entity";
+import { mapUser } from "../user/user-util";
 
 // import { User } from "./user.entity";
 
@@ -11,10 +12,9 @@ export class AuthService {
     }
 
     public generate(user: User) {
-        const {password, ...result} = user;
         return this.jwtService.sign({
             sub: user.id,
-            user: result
+            user: mapUser(user)
         })
     }
 
