@@ -20,8 +20,7 @@ export class DepartmentController {
     }
 
     @Post()
-    @UseGuards(JWT)
-    @Roles(Role.Admin)
+    @Roles(Role.Admin, Role.Manager)
     async create(@Body() department: CreateDepartmentDTO) {
         return this.departmentRepo.save({
             name: department.name,

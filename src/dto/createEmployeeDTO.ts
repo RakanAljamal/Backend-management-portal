@@ -28,3 +28,7 @@ export class CreateEmployeeDTO {
 export class UpdateEmployeeDto extends PartialType(OmitType(CreateEmployeeDTO, ['email'] as const)) {
     oldPassword: string;
 }
+
+export class UpdateEmployeeAdmin extends PartialType(OmitType(CreateEmployeeDTO, ['retypedPassword'] as const)) {
+    oldPassword: string;
+}
