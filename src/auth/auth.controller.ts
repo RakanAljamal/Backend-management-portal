@@ -17,11 +17,5 @@ export class AuthController {
             token: this.authService.generate(user)
         }
     }
-
-    @Post()
-    @UseGuards(JWT)
-    async me(@CurrentUser() user: User) {
-        return user;
-    }
 }
 

@@ -27,12 +27,13 @@ export class User {
     role: Role;
 
     @ManyToOne(() => Department, (department) => department.users, {
-        nullable: true
+        nullable: true,
+        eager: true
     })
     @JoinColumn()
     department: Department;
 
-    @ManyToMany(() => Project, (project) => project.users, {nullable: true})
+    @ManyToMany(() => Project, (project) => project.users, {nullable: true,eager:true})
     @JoinTable()
     projects: Project[];
 

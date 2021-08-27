@@ -16,6 +16,17 @@ export class UserService {
                 @InjectRepository(Project) readonly projectRepo: Repository<Project>) {
     }
 
+    async findAll() {
+        const users: User[] = await this.userRepository.find({
+            order: {
+                createdAt: 'DESC'
+            }
+        });
+
+
+        return users.map(user => mapUser(user));
+    }
+
     async createEmployee(employee: CreateEmployeeDTO) {
         const {firstName, lastName, password, email} = employee;
 
@@ -137,5 +148,15 @@ export class UserService {
             projects,
             updatedAt: new Date().toISOString()
         }));
+    }
+
+    async delete(id) {
+        const user = await this.userRepository.find(id);
+
+        if (!user) {
+            throw new NotFoundException("User not found");
+        }
+
+        return this.userRepository.remove(user);
     }
 }

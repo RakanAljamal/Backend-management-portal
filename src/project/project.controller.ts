@@ -17,18 +17,23 @@ export class ProjectController {
     }
 
     @Get()
-    async welcome() {
-        return "This is an Project page"
+    @Roles(Role.Admin,Role.Manager)
+    async findAll() {
+        return this.projectRepo.find({
+            order: {
+                createdAt: 'DESC'
+            }
+        })
     }
 
     @Post()
-    @Roles(Role.Manager, Role.Admin)
+    @Roles(Role.Admin,Role.Manager)
     async create(@Body() projectDTO: CreateProjectDTO) {
         const {usersId, ...project} = projectDTO;
 
         const users = await this.userRepo.find({
             where: {
-                id: In(usersId)
+                id: In(usersId || [])
             }
         })
 

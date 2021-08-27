@@ -5,7 +5,6 @@ import { Department } from "./department.entity";
 import { CreateDepartmentDTO } from "../dto/createDepartmentDTO";
 import { Roles } from "../auth/roles.decorator";
 import { Role } from "../user/role";
-import { JWT } from "../auth/auth-util";
 
 
 @Controller('department')
@@ -15,12 +14,17 @@ export class DepartmentController {
     }
 
     @Get()
-    async welcome() {
-        return "This is an Department page"
+    @Roles(Role.Admin,Role.Manager)
+    async findAll() {
+        return this.departmentRepo.find({
+            order: {
+                createdAt: 'DESC'
+            }
+        })
     }
 
     @Post()
-    @Roles(Role.Admin, Role.Manager)
+    @Roles(Role.Admin,Role.Manager)
     async create(@Body() department: CreateDepartmentDTO) {
         return this.departmentRepo.save({
             name: department.name,

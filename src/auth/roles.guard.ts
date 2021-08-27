@@ -29,7 +29,11 @@ export class RolesGuard implements CanActivate {
             throw new ForbiddenException("User not authorized to perform this action")
         }
         const userToken = <string>token.replace('Bearer ', '');
-        const payload = this.jwtService.verify(userToken);
-        return requiredRoles.some((role) => payload?.user.role === role);
+        try{
+            const payload = this.jwtService.verify(userToken);
+            return requiredRoles.some((role) => payload?.user.role === role);
+        } catch (err){
+            throw new ForbiddenException('User not authorized to perform this action');
+        }
     }
 }

@@ -1,10 +1,11 @@
-import { Body, Controller, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { CreateEmployeeDTO, UpdateEmployeeAdmin, UpdateEmployeeDto } from "../dto/createEmployeeDTO";
 import { UserService } from "./user.service";
 import { CurrentUser } from "../auth/current-user";
 import { JWT } from "../auth/auth-util";
 import { Roles } from "../auth/roles.decorator";
 import { Role } from "./role";
+import { mapUser } from "./user-util";
 
 @Controller('user')
 export class UserController {
@@ -28,5 +29,22 @@ export class UserController {
     @Roles(Role.Admin)
     async updateEmployee(@Body() employee: UpdateEmployeeAdmin,@Param() id: string) {
         return this.userService.updateEmployeeWithAdmin(employee, id);
+    }
+
+    @Get()
+    @Roles(Role.Admin)
+    async findAll(){
+        return this.userService.findAll();
+    }
+    @Get('/me')
+    @UseGuards(JWT)
+    async myInfo(@CurrentUser() user){
+        return user;
+    }
+
+    @Delete('/delete/:id')
+    @Roles(Role.Admin)
+    async deleteUser(@Param() id){
+        return await this.userService.delete(id)
     }
 }

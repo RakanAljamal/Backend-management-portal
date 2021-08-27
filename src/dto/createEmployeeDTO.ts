@@ -1,5 +1,6 @@
 import { IsString, Length, IsEmail } from "class-validator";
 import { OmitType, PartialType } from "@nestjs/mapped-types";
+import { Role } from "../user/role";
 
 export class CreateEmployeeDTO {
     @IsString()
@@ -31,4 +32,5 @@ export class UpdateEmployeeDto extends PartialType(OmitType(CreateEmployeeDTO, [
 
 export class UpdateEmployeeAdmin extends PartialType(OmitType(CreateEmployeeDTO, ['retypedPassword'] as const)) {
     oldPassword: string;
+    role: Role;
 }
