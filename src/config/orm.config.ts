@@ -15,6 +15,9 @@ export default registerAs(
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
         entities: [Department, User, Project],
+        migrations: ["dist/migrations/*{.ts,.js}"],
+        migrationsTableName: "migrations_typeorm",
+        migrationsRun: true,
         synchronize: true
     })
 );
