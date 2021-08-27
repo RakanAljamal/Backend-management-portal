@@ -6,6 +6,7 @@ import { JWT } from "../auth/auth-util";
 import { Roles } from "../auth/roles.decorator";
 import { Role } from "./role";
 import { mapUser } from "./user-util";
+import { ChangePasswordDTO } from "../dto/changePasswordDTO";
 
 @Controller('user')
 export class UserController {
@@ -17,6 +18,12 @@ export class UserController {
     @Roles(Role.Admin, Role.Manager)
     async createEmployee(@Body() employee: CreateEmployeeDTO) {
         return await this.userService.createEmployee(employee);
+    }
+
+    @Post('/password')
+    @UseGuards(JWT)
+    async changePassword(@Body() passwordPayload: ChangePasswordDTO,@CurrentUser() user) {
+        return await this.userService.changePassword(passwordPayload,user);
     }
 
     @Patch('/update')

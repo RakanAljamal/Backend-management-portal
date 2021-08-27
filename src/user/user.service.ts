@@ -7,6 +7,7 @@ import { Repository, In } from 'typeorm';
 import { CreateEmployeeDTO, UpdateEmployeeAdmin, UpdateEmployeeDto } from "../dto/createEmployeeDTO";
 import * as bcrypt from 'bcrypt';
 import { mapUser, validatePassword } from "./user-util";
+import { ChangePasswordDTO } from "../dto/changePasswordDTO";
 
 
 @Injectable()
@@ -120,10 +121,6 @@ export class UserService {
             throw  new NotFoundException("User not found");
         }
 
-        if (employee.oldPassword && await validatePassword(employee.oldPassword, user.password)) {
-            throw new BadRequestException('Your old password is wrong please try again');
-        }
-
         const department = await this.departmentRepo.findOne(employee.departmentId || -1)
 
         if (employee.departmentId && !department) {
@@ -158,5 +155,27 @@ export class UserService {
         }
 
         return this.userRepository.remove(user);
+    }
+
+    async changePassword(payload: ChangePasswordDTO, userPayload: any) {
+
+        const user = await this.userRepository.findOne(userPayload.id);
+
+        if (payload.password !== payload.retypedPassword) {
+            throw new BadRequestException('Passwords doesnt match');
+        }
+
+        if (!await validatePassword(payload.oldPassword, user.password)) {
+            throw new BadRequestException('Your password is wrong')
+        }
+
+        const changedUser = await this.userRepository.save({
+            ...user,
+            password: await bcrypt.hash(payload.password,10)
+        });
+
+        return changedUser && 'Your password has changed';
+
+
     }
 }
